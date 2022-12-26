@@ -15,5 +15,16 @@ public class MonteCarloSimulation {
         for (int i = 0; i < frequency.length; i++) {
             this.frequencySum = this.frequencySum + frequency[i];
         }
+        this.probability=calculateProbability();
     }
+
+    public double[] calculateProbability(){
+        double[]probability=new double[this.sampleTimeFrame.length];
+        for (int i=0;i<this.sampleTimeFrame.length;i++){
+            probability[i]=frequency[i]/frequencySum;
+        }
+        return probability;
+    }
+
+
 }
