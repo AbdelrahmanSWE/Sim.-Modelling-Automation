@@ -53,5 +53,22 @@ public class MonteCarloSimulation {
         for (int i=0;i<this.sampleTimeFrame.length;i++){
             System.out.printf("|%-5d|%-9.2f|%-11.2f|%-16.2f|%-3d to %-3d|\n",sampleTimeFrame[i],frequency[i],probability[i],commProbability[i],intervals[i][0],intervals[i][1]);
         }
+        System.out.printf("      |%-9.2f|\n\n",frequencySum);
+    }
+
+    public void simulate(int[]randomNumbers){
+        int timeIntervalNumber=randomNumbers.length;
+        System.out.println("|Days(Sim)|RN |Sim Value|");
+        double sumOfSimFrequencies=0;
+        for (int i=0;i<timeIntervalNumber;i++){
+            for (int j=0;j<this.sampleTimeFrame.length;j++){
+                if (randomNumbers[i]>=intervals[j][0] && randomNumbers[i]<=intervals[j][1]){
+                    sumOfSimFrequencies=sumOfSimFrequencies+this.frequency[j];
+                    System.out.printf("|%-9d|%-3d|%-9.2f|\n",i+1,randomNumbers[i],this.frequency[j]);
+                }
+            }
+        }
+        System.out.printf("              |%-9.2f|\n",sumOfSimFrequencies);
+
     }
 }
