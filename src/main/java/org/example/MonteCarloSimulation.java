@@ -28,8 +28,9 @@ public class MonteCarloSimulation {
 
     public double[] calculateComProbability(){
         double[] commProbability=new double[this.probability.length];
-        for (int i=0;i<this.probability.length;i++){
-
+        commProbability[0]=this.probability[0];
+        for (int i=1;i<this.probability.length;i++){
+            commProbability[0]=this.probability[i]+commProbability[i-1];
         }
         return commProbability;
     }
