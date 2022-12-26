@@ -16,6 +16,8 @@ public class MonteCarloSimulation {
             this.frequencySum = this.frequencySum + frequency[i];
         }
         this.probability=calculateProbability();
+        this.commProbability=calculateComProbability();
+        this.intervals=calculateIntervals();
     }
 
     public double[] calculateProbability(){
@@ -33,6 +35,17 @@ public class MonteCarloSimulation {
             commProbability[0]=this.probability[i]+commProbability[i-1];
         }
         return commProbability;
+    }
+
+    public int[][] calculateIntervals(){
+        int[][] intervals=new int[commProbability.length][2];
+        intervals[0][0]=1;
+        intervals[0][1]=(int)commProbability[0];
+        for (int i=1;i<commProbability.length;i++){
+            intervals[i][0]=(int)(commProbability[i-1]*100)+1;
+            intervals[i][1]=(int)commProbability[i];
+        }
+        return intervals;
     }
 
 
