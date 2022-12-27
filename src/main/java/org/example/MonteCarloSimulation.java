@@ -75,6 +75,5 @@ public class MonteCarloSimulation {
         }
         System.out.printf("              |%-9.2f|\n",sumOfSimFrequencies);
         System.out.println("the average Simulated is: "+sumOfSimFrequencies/randomNumbers.length);
-
     }
 }
