@@ -2,18 +2,18 @@ package org.example;
 
 public class MonteCarloSimulation {
 
-    private int[] sampleTimeFrame;
-    private double[] frequency;
+    private final int[] demand;
+    private final double[] frequency;
     public double frequencySum=0;
-    private double[] probability;
-    private double[] commProbability;
-    private int[][] intervals;
+    private final double[] probability;
+    private final double[] commProbability;
+    private final int[][] intervals;
 
-    public MonteCarloSimulation(int[] sampleTimeFrame, double[] frequency) {
-        this.sampleTimeFrame = sampleTimeFrame;
+    public MonteCarloSimulation(int[] demand, double[] frequency) {
+        this.demand = demand;
         this.frequency = frequency;
-        for (int i = 0; i < frequency.length; i++) {
-            this.frequencySum = this.frequencySum + frequency[i];
+        for (double v : frequency) {
+            this.frequencySum = this.frequencySum + v;
         }
         this.probability=calculateProbability();
         this.commProbability=calculateComProbability();
@@ -21,8 +21,8 @@ public class MonteCarloSimulation {
     }
 
     public double[] calculateProbability(){
-        double[]probability=new double[this.sampleTimeFrame.length];
-        for (int i=0;i<this.sampleTimeFrame.length;i++){
+        double[]probability=new double[this.demand.length];
+        for (int i = 0; i<this.demand.length; i++){
             probability[i]=frequency[i]/frequencySum;
         }
         return probability;
@@ -49,11 +49,16 @@ public class MonteCarloSimulation {
     }
 
     public void displayCalculatedTable(){
-        System.out.println("|Time |Frequency|Probability|Comm Probability|Intervals |");
-        for (int i=0;i<this.sampleTimeFrame.length;i++){
-            System.out.printf("|%-5d|%-9.2f|%-11.2f|%-16.2f|%-3d to %-3d|\n",sampleTimeFrame[i],frequency[i],probability[i],commProbability[i],intervals[i][0],intervals[i][1]);
+        double expectedValue=0;
+        System.out.println("|Demand|Frequency|Probability|Comm Probability|Intervals |");
+        for (int i = 0; i<this.demand.length; i++){
+            System.out.printf("|%-6d|%-9.2f|%-11.2f|%-16.2f|%-3d to %-3d|\n", demand[i],frequency[i],probability[i],commProbability[i],intervals[i][0],intervals[i][1]);
         }
-        System.out.printf("      |%-9.2f|\n\n",frequencySum);
+        System.out.printf("      |%-9.2f|\n",frequencySum);
+        for (int i = 0; i<this.demand.length; i++){
+            expectedValue+=(this.demand[i]*this.probability[i]);
+        }
+        System.out.println("The Expected value is: "+expectedValue+"\n------------------------------------------------------------------------------\n");
     }
 
     public void simulate(int[]randomNumbers){
@@ -61,14 +66,15 @@ public class MonteCarloSimulation {
         System.out.println("|Days(Sim)|RN |Sim Value|");
         double sumOfSimFrequencies=0;
         for (int i=0;i<timeIntervalNumber;i++){
-            for (int j=0;j<this.sampleTimeFrame.length;j++){
+            for (int j = 0; j<this.demand.length; j++){
                 if (randomNumbers[i]>=intervals[j][0] && randomNumbers[i]<=intervals[j][1]){
-                    sumOfSimFrequencies=sumOfSimFrequencies+this.frequency[j];
-                    System.out.printf("|%-9d|%-3d|%-9.2f|\n",i+1,randomNumbers[i],this.frequency[j]);
+                    sumOfSimFrequencies=sumOfSimFrequencies+this.demand[j];
+                    System.out.printf("|%-9d|%-3d|%-9d|\n",i+1,randomNumbers[i],this.demand[j]);
                 }
             }
         }
         System.out.printf("              |%-9.2f|\n",sumOfSimFrequencies);
+        System.out.println("the average Simulated is: "+sumOfSimFrequencies/randomNumbers.length);
 
     }
 }
