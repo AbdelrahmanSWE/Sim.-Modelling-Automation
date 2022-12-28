@@ -129,6 +129,8 @@ public class InventoryControlSimulation {
         System.out.println("Total Holding inventory: "+totalHold+
                 "\nThe daily(or weekly depending on unit time used) Holding price is: "+(totalHold/randomNumbers.length)*this.holdingCost+
                 "\n________________________________________________________________________________________________________________________");
+        System.out.println("Total daily(or weekly depending on unit time used) price is:"+
+                ((totalLost/randomNumbers.length)*this.stockoutCost+(totalHold/randomNumbers.length)*this.holdingCost+(totalOrders/randomNumbers.length)*this.orderCost));
 
     }
 }
