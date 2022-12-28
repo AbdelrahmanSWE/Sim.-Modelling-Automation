@@ -12,8 +12,9 @@ public class InventoryControlSimulation {
     private final int orderQuantity;
     private final double holdingCost;
     private final double stockoutCost;
+    private final double orderCost;
     private final int reorderPoint;
-    public InventoryControlSimulation(int[] demand, double[] probability, int[] leadTime, double[] leadProbability, int orderQuantity, double holdingCost, double stockoutCost, int reorderPoint) {
+    public InventoryControlSimulation(int[] demand, double[] probability, int[] leadTime, double[] leadProbability, int orderQuantity, double holdingCost, double stockoutCost,double orderCost , int reorderPoint) {
         this.demand = demand;
         this.probability=probability;
         this.commProbability=calculateComProbability(this.probability);
@@ -27,6 +28,7 @@ public class InventoryControlSimulation {
         this.orderQuantity = orderQuantity;
         this.holdingCost = holdingCost;
         this.stockoutCost = stockoutCost;
+        this.orderCost = orderCost;
         this.reorderPoint = reorderPoint;
     }
     public double[] calculateComProbability(double[] probability){
@@ -64,6 +66,7 @@ public class InventoryControlSimulation {
     public void simulate(int[]randomNumbers,int[]leadRN){
         System.out.println("|Time|New Units|Beginning Inventory|RN |Simulated Demand|Ending Inventory|Lost Sales|Created Orders|ORN|Simulated Lead Time|");
         int c=0, begInv=this.orderQuantity,newUnits=0,endInv=begInv,simDemand=0,lostSales=0,simLeadTime=0;
+        double totalOrders=0,totalLost=0,totalHold=0;
         boolean createdOrder=false,orderArrivedFlag=false;
         for (int i=0;i<randomNumbers.length;i++){
             if (simLeadTime>0){
@@ -73,16 +76,17 @@ public class InventoryControlSimulation {
                 }
             }
             lostSales=0;
-            System.out.printf("|%-4d|%-9d|%-19d|"
-                    ,i+1,newUnits,begInv);
+            System.out.printf("|%-4d|%-9d|%-19d|",i+1,newUnits,begInv);
             for (int j=0;j<demand.length;j++){
-                if (randomNumbers[i]<=intervals[j][1]&&randomNumbers[i]>=intervals[j][0]){
+                if (randomNumbers[i]<=intervals[j][1] && randomNumbers[i]>=intervals[j][0]){
                     simDemand=demand[j];
                     endInv=begInv-simDemand;
                     if (endInv<0) {
-                        lostSales+=(-1*endInv);
+                        lostSales=(-1*endInv);
+                        totalLost+=lostSales;
                         endInv = 0;
                     }
+                    totalHold+=endInv;
                     System.out.printf("%-3d|%-16d|%-16d|%-10d|",randomNumbers[i],simDemand,endInv,lostSales);
                 }
             }
@@ -91,7 +95,11 @@ public class InventoryControlSimulation {
                 System.out.printf("%-14b|",createdOrder);
                 for (int k=0;k<leadTime.length;k++){
                     if (leadRN[c]<=leadIntervals[k][1]&&leadRN[c]>=leadIntervals[k][0]){
+                        totalOrders++;
                         simLeadTime=leadTime[k];
+                        if (simLeadTime==0){
+                            orderArrivedFlag=true;
+                        }
                         System.out.printf("%-3d|%-19d|\n",leadRN[c],simLeadTime);
                     }
                 }
@@ -105,10 +113,22 @@ public class InventoryControlSimulation {
                 newUnits=this.orderQuantity;
                 begInv=newUnits;
                 orderArrivedFlag=false;
-            }else {
+            }
+            else {
                 begInv = endInv;
                 newUnits = 0;
             }
         }
+        System.out.println("\n________________________________________________________________________________________________________________________" +
+                "\nTotal Orders made in the simulation were: "+totalOrders+
+                "\nThe daily(or weekly depending on unit time used) Ordering price is: "+(totalOrders/randomNumbers.length)*this.orderCost+
+                "\n________________________________________________________________________________________________________________________");
+        System.out.println("Total Lost sales were: "+totalLost+
+                "\nThe daily(or weekly depending on unit time used) Lost sales price is: "+(totalLost/randomNumbers.length)*this.stockoutCost+
+                "\n________________________________________________________________________________________________________________________");
+        System.out.println("Total Holding inventory: "+totalHold+
+                "\nThe daily(or weekly depending on unit time used) Holding price is: "+(totalHold/randomNumbers.length)*this.holdingCost+
+                "\n________________________________________________________________________________________________________________________");
+
     }
 }
