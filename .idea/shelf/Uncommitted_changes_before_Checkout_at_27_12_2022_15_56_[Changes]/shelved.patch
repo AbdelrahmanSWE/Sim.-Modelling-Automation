@@ -1,0 +1,15 @@
+Index: src/main/java/org/example/InventoryControlSimulation.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example;\r\n\r\npublic class InventoryControlSimulation {\r\n}\r\n
+===================================================================
+diff --git a/src/main/java/org/example/InventoryControlSimulation.java b/src/main/java/org/example/InventoryControlSimulation.java
+--- a/src/main/java/org/example/InventoryControlSimulation.java	
++++ b/src/main/java/org/example/InventoryControlSimulation.java	
+@@ -1,4 +1,6 @@
+ package org.example;
+ 
+ public class InventoryControlSimulation {
++
++
+ }
